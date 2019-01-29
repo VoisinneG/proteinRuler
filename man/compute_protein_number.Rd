@@ -35,3 +35,9 @@ a list containing the following elements :
 \description{
 Compute protein abundance using the protein ruler methodology
 }
+\examples{
+data("proteinGroups_CD4_Tcells")
+idx_histones <- grep("^Histone H", proteinGroups_CD4_Tcells$`Protein names`)
+col_mass <- "Mol. weight [kDa]"
+res <- proteinRuler(proteinGroups_CD4_Tcells, idx_histones = idx_histones, col_mass = col_mass)
+}

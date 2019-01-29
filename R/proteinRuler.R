@@ -12,7 +12,7 @@
 #' @param mass_per_cell_in_pg Compute protein abundance using a constant mass per cell.
 #' @param DNA_mass_per_cell Mass of DNA per cell (in g)
 #' @return a data.frame with protein abundances
-#' @example 
+#' @examples
 #' data("proteinGroups_CD4_Tcells")
 #' res <- proteinRuler(proteinGroups_CD4_Tcells, organism = "mouse", DNA_mass_per_cell = 5.5209e-12)
 #' @import pannot
@@ -99,6 +99,11 @@ proteinRuler <- function(df,
 #' @return a list containing the following elements :
 #' @return \code{copy_number} : a data.frame with protein abundances
 #' @return \code{summary} : a data.frame with summary variables 
+#' @examples
+#' data("proteinGroups_CD4_Tcells")
+#' idx_histones <- grep("^Histone H", proteinGroups_CD4_Tcells$`Protein names`)
+#' col_mass <- "Mol. weight [kDa]"
+#' res <- proteinRuler(proteinGroups_CD4_Tcells, idx_histones = idx_histones, col_mass = col_mass)
 #' @export
 compute_protein_number <- function(df,
                                    idx_histones,

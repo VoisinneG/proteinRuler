@@ -38,3 +38,7 @@ a data.frame with protein abundances
 \description{
 Compute protein abundance using the protein ruler methodology
 }
+\examples{
+data("proteinGroups_CD4_Tcells")
+res <- proteinRuler(proteinGroups_CD4_Tcells, organism = "mouse", DNA_mass_per_cell = 5.5209e-12)
+}
