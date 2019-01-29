@@ -95,7 +95,7 @@ proteinRuler <- function(df,
 #' @param pattern_intensity Pattern (regular exrpression) used to identfy df's columns containing protein intensity values
 #' @param col_intensity Names of intensity columns. Overrides \code{pattern_intensity}.
 #' @param col_ID Column with protein mass (in kDa)
-#' @param col_ID Column with IDs 
+#' @param col_mass Column with IDs 
 #' @param mass_per_cell_in_pg Compute protein abundance using a constant mass per cell.
 #' @param DNA_mass_per_cell Mass of DNA per cell (in g)
 #' @return a list containing the following elements :
