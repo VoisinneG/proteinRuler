@@ -3,3 +3,4 @@
 export(compute_protein_number)
 export(proteinRuler)
 import(pannot)
+importFrom(stats,median)

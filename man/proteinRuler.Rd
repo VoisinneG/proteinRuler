@@ -31,6 +31,8 @@ proteinRuler(df, col_names = "Gene names",
 \item{mass_per_cell_in_pg}{Compute protein abundance using a constant mass per cell.}
 
 \item{DNA_mass_per_cell}{Mass of DNA per cell (in g)}
+
+\item{...}{additionnal parameters passed to fucntion \code{compute_protein_number()}}
 }
 \value{
 a data.frame with protein abundances

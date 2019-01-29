@@ -11,6 +11,7 @@
 #' @param organism Either "mouse" or "human"
 #' @param mass_per_cell_in_pg Compute protein abundance using a constant mass per cell.
 #' @param DNA_mass_per_cell Mass of DNA per cell (in g)
+#' @param ... additionnal parameters passed to fucntion \code{compute_protein_number()}
 #' @return a data.frame with protein abundances
 #' @examples
 #' data("proteinGroups_CD4_Tcells")
@@ -93,6 +94,7 @@ proteinRuler <- function(df,
 #' @param idx_histones Row indexes corresponding to histone proteins
 #' @param pattern_intensity Pattern (regular exrpression) used to identfy df's columns containing protein intensity values
 #' @param col_intensity Names of intensity columns. Overrides \code{pattern_intensity}.
+#' @param col_ID Column with protein mass (in kDa)
 #' @param col_ID Column with IDs 
 #' @param mass_per_cell_in_pg Compute protein abundance using a constant mass per cell.
 #' @param DNA_mass_per_cell Mass of DNA per cell (in g)
@@ -104,6 +106,7 @@ proteinRuler <- function(df,
 #' idx_histones <- grep("^Histone H", proteinGroups_CD4_Tcells$`Protein names`)
 #' col_mass <- "Mol. weight [kDa]"
 #' res <- proteinRuler(proteinGroups_CD4_Tcells, idx_histones = idx_histones, col_mass = col_mass)
+#' @importFrom stats median
 #' @export
 compute_protein_number <- function(df,
                                    idx_histones,
