@@ -19,13 +19,13 @@ compute_protein_number(df, idx_histones,
 
 \item{col_intensity}{Names of intensity columns. Overrides \code{pattern_intensity}.}
 
+\item{col_mass}{Column with IDs}
+
 \item{col_ID}{Column with protein mass (in kDa)}
 
 \item{mass_per_cell_in_pg}{Compute protein abundance using a constant mass per cell.}
 
 \item{DNA_mass_per_cell}{Mass of DNA per cell (in g)}
-
-\item{col_ID}{Column with IDs}
 }
 \value{
 a list containing the following elements :
