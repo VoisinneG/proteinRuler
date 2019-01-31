@@ -42,7 +42,8 @@ proteinRuler <- function(df,
   idx_filter <- c( grep("KRT",df[[col_names]]), 
                    grep("^CON",df[[col_protein_id]]), 
                    grep("^REV",df[[col_protein_id]]), 
-                   grep("^Biognosys",df[[col_protein_id]]) )
+                   grep("^Biognosys",df[[col_protein_id]]),
+                   which(is.na(df[[col_protein_id]])))
   
   if(length(idx_filter)>0){
     df <- df[-idx_filter, ]
@@ -59,7 +60,8 @@ proteinRuler <- function(df,
   
   df_annot <- pannot::get_annotations(df, name_id = col_protein_id, organism = organism, split_param = ";")
   #convert Mass (in kDa) from factors to numeric values
-  df_annot$Mass <- as.numeric( sub( "," , "." , as.character(df_annot$Mass) ) );
+  df_annot$Mass <- as.numeric( gsub( "," , "" , as.character(df_annot$Mass) ) )
+  df_annot$Mass <- df_annot$Mass/1e3 # Mass in kDa
   df$Mass <- df_annot$Mass
   
   ########################### Identify Histone proteins
@@ -80,8 +82,10 @@ proteinRuler <- function(df,
                                 col_intensity = col_intensity,
                                 col_ID = col_protein_id,
                                 mass_per_cell_in_pg = mass_per_cell_in_pg,
-                                DNA_mass_per_cell = DNA_mass_per_cell
-  )
+                                DNA_mass_per_cell = DNA_mass_per_cell,
+                                ...)
+  
+  res[["annotations"]] <- df_annot
   
   return(res)
   
