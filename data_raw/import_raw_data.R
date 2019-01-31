@@ -1,6 +1,6 @@
 library(readxl)
 
-proteinGroups_CD4_Tcells <- read_excel("~/ownCloud/++Work/++Research/++Projects/Proteomes/Kinetics/data/proteome_effector_CD4_T_cells.xlsx", sheet = 1) 
+proteinGroups_CD4_Tcells <- read_excel("~/ownCloud/++Work/++Research/++Projects/Proteomes/Proteome_CD4_Kinetics/data/proteome_effector_CD4_T_cells.xlsx", sheet = 1) 
 
 # save in ./R/sysdata.rda  ---------------------------------------------------------------------------------------
 
