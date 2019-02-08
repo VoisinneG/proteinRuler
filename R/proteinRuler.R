@@ -109,7 +109,7 @@ proteinRuler <- function(df,
 #' data("proteinGroups_CD4_Tcells")
 #' idx_histones <- grep("^Histone H", proteinGroups_CD4_Tcells$`Protein names`)
 #' col_mass <- "Mol. weight [kDa]"
-#' res <- proteinRuler(proteinGroups_CD4_Tcells, idx_histones = idx_histones, col_mass = col_mass)
+#' res <- compute_protein_number(proteinGroups_CD4_Tcells, idx_histones = idx_histones, col_mass = col_mass)
 #' @importFrom stats median
 #' @export
 compute_protein_number <- function(df,
