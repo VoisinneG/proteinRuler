@@ -1,4 +1,4 @@
-[![Travis-CI Build Status](https://travis-ci.org/VoisinneG/InteRact.svg?branch=master)](https://travis-ci.org/VoisinneG/proteinRuler) 
+[![Travis-CI Build Status](https://travis-ci.org/VoisinneG/proteinRuler.svg?branch=master)](https://travis-ci.org/VoisinneG/proteinRuler) 
 
 # R Package : proteinRuler
 

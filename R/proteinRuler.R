@@ -32,10 +32,10 @@ proteinRuler <- function(df,
   
   
   if(! col_names %in% names(df)){
-    stop(paste(col_names, "is not a column name\n", sep = ""))
+    stop(paste(col_names, " is not a column name\n", sep = ""))
   }
   if(! col_protein_id %in% names(df)){
-    stop(paste(col_protein_id, "is not a column name\n", sep = ""))
+    stop(paste(col_protein_id, " is not a column name\n", sep = ""))
   }
   ######################### Filter proteins
   
@@ -52,7 +52,7 @@ proteinRuler <- function(df,
   if(col_score %in% names(df)){
     df <- df[df[[col_score]]>Score_threshold, ]
   }else{
-    warning(paste(col_score, "is not a column name\n", sep = ""))
+    warning(paste(col_score, " is not a column name\n", sep = ""))
   }
   
   
