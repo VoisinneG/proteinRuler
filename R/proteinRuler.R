@@ -80,6 +80,7 @@ proteinRuler <- function(df,
     
     id = sapply(as.character(df[[col_protein_id]]), 
                 function(x){ strsplit(x, split = sep_id)[[1]][1]})
+    
     df_annot <- queryup::get_annotations_uniprot(id = id, 
                                                  columns = c("genes", "families", "mass"), 
                                                  show_progress = show_progress)
@@ -181,7 +182,7 @@ compute_protein_number <- function(df,
   
   if(replace_zero_by_na){
     for( i in 1:length(col_int) ){
-      idx <- which( df_int[ , col_int[i]] == 0 )
+      idx <- which( df_int[ , col_int[i] ] == 0 )
       df_int[idx , col_int[i]] <- NA
     }
   }
@@ -207,7 +208,7 @@ compute_protein_number <- function(df,
       copy_number[[col_int[i]]] = 6.022e23 * df_int[, col_int[i]] * DNA_mass_per_cell /
         (1e3*df[[col_mass]]*I_hist_tot[i]);
     }else{
-      copy_number[[col_int[i]]] = 6.022e23 * df_int[, col_int[i]] * 40e-12 / 
+      copy_number[[col_int[i]]] = 6.022e23 * df_int[, col_int[i]] * mass_per_cell_in_pg / 
         (1e3*df[[col_mass]]*I_tot[i])
     }
   }
