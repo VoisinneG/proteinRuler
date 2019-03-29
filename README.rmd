@@ -1,0 +1,47 @@
+---
+title: "R package: proteinRuler"
+author: "Guillaume Voisinne"
+output: 
+  github_document :
+    html_preview: true
+date: "`r format(Sys.time(), '%Y - %m - %d')`"
+---
+
+```{r include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warnings=FALSE)
+```
+
+[![Travis-CI Build Status](https://travis-ci.org/VoisinneG/proteinruler.svg?branch=master)](https://travis-ci.org/VoisinneG/queryup) 
+
+
+
+# R Package : proteinRuler
+
+Compute protein abundance from protein intensities using the protein ruler methodology.
+
+Install
+---
+Install the package from github using devtools:
+
+```{r}
+devtools::install_github("VoisinneG/proteinRuler")
+library(proteinRuler)
+```
+
+
+Examples
+---
+Import a dataset containing protein intensities and protein IDs and compute protein abundances :
+
+```{r}
+data("proteinGroups_CD4_Tcells")
+res <- proteinRuler(proteinGroups_CD4_Tcells, DNA_mass_per_cell = 5.5209e-12)
+str(res)
+```
+
+Plot copy number distribution :
+```{r}
+cond <- "CopyNumber_WT_0"
+hist(log10(res$copy_number[[cond]]), main = "", xlab = paste(cond, "(log10)"), col = rgb(1,0,0,0.25)))
+```

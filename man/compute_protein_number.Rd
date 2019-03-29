@@ -19,9 +19,9 @@ compute_protein_number(df, idx_histones,
 
 \item{col_intensity}{Names of intensity columns. Overrides \code{pattern_intensity}.}
 
-\item{col_mass}{Column with IDs}
+\item{col_mass}{Column with protein mass (in kDa)}
 
-\item{col_ID}{Column with protein mass (in kDa)}
+\item{col_ID}{Column with IDs}
 
 \item{mass_per_cell_in_pg}{Compute protein abundance using a constant mass per cell.}
 
@@ -39,7 +39,7 @@ Compute protein abundance using the protein ruler methodology
 }
 \examples{
 data("proteinGroups_CD4_Tcells")
-idx_histones <- grep("^Histone H", proteinGroups_CD4_Tcells$`Protein names`)
+idx_h <- grep("^Histone H", proteinGroups_CD4_Tcells$`Protein names`)
 col_mass <- "Mol. weight [kDa]"
-res <- compute_protein_number(proteinGroups_CD4_Tcells, idx_histones = idx_histones, col_mass = col_mass)
+res <- compute_protein_number(proteinGroups_CD4_Tcells, idx_histones = idx_h, col_mass = col_mass)
 }

@@ -4,33 +4,39 @@
 \alias{proteinRuler}
 \title{Compute protein abundance using the protein ruler methodology}
 \usage{
-proteinRuler(df, col_names = "Gene names",
-  col_protein_id = "Protein IDs", col_score = "Score",
-  Score_threshold = 0, pattern_intensity = "^Intensity.",
-  col_intensity = NULL, organism = "mouse",
-  mass_per_cell_in_pg = NULL, DNA_mass_per_cell = 5.5209e-12, ...)
+proteinRuler(df, col_protein_id = "Protein IDs", sep_id = ";",
+  pattern_intensity = "^Intensity.", col_intensity = NULL,
+  mass_per_cell_in_pg = NULL, DNA_mass_per_cell = 5.5209e-12,
+  filtering = TRUE, col_names = "Gene names", col_score = "Score",
+  Score_threshold = 0, idx_histones = NULL, col_mass = NULL, ...)
 }
 \arguments{
 \item{df}{A data.frame containing protein intensities. By default, protein intensity column names start by "Intensity." 
 (use parameter \code{pattern_intensity} to change)}
 
-\item{col_names}{Column with gene names.}
+\item{col_protein_id}{Column with protein IDs. When several protein IDs are found, only the first one is conserved.}
 
-\item{col_protein_id}{Column with protein IDs}
-
-\item{col_score}{Column with protein identification score}
-
-\item{Score_threshold}{Threshold on protein identification score}
+\item{sep_id}{character string separating different protein IDs}
 
 \item{pattern_intensity}{Pattern (regular exrpression) used to identfy df's columns containing protein intensity values}
 
 \item{col_intensity}{Names of intensity columns. Overrides \code{pattern_intensity}.}
 
-\item{organism}{Either "mouse" or "human"}
-
 \item{mass_per_cell_in_pg}{Compute protein abundance using a constant mass per cell.}
 
 \item{DNA_mass_per_cell}{Mass of DNA per cell (in g)}
+
+\item{filtering}{Filter out contaminants and poorly scored proteins.}
+
+\item{col_names}{Column with gene names.}
+
+\item{col_score}{Column with protein identification score}
+
+\item{Score_threshold}{Threshold on protein identification score}
+
+\item{idx_histones}{Row indexes corresponding to histone proteins}
+
+\item{col_mass}{Column with protein mass (in kDa)}
 
 \item{...}{additionnal parameters passed to fucntion \code{compute_protein_number()}}
 }
@@ -42,5 +48,9 @@ Compute protein abundance using the protein ruler methodology
 }
 \examples{
 data("proteinGroups_CD4_Tcells")
-res <- proteinRuler(proteinGroups_CD4_Tcells, organism = "mouse", DNA_mass_per_cell = 5.5209e-12)
+res <- proteinRuler(proteinGroups_CD4_Tcells, DNA_mass_per_cell = 5.5209e-12)
+str(res)
+cond <- "CopyNumber_WT_0"
+hist(log10(res$copy_number[[cond]]), main = "",
+xlab = paste(cond, "(log10)"), col = rgb(1,0,0,0.25))
 }
