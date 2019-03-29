@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE, message=FALSE, warnings=FALSE)
 
 # R Package : proteinRuler
 
-Compute protein abundance from protein intensities using the protein ruler methodology.
+Compute protein abundance from protein intensities using the 'protein ruler' methodology (See article by [Wisniewski et. al](https://doi.org/10.1074/mcp.M113.037309)).
 
 Install
 ---
@@ -36,12 +36,13 @@ Import a dataset containing protein intensities and protein IDs and compute prot
 
 ```{r}
 data("proteinGroups_CD4_Tcells")
-res <- proteinRuler(proteinGroups_CD4_Tcells, DNA_mass_per_cell = 5.5209e-12)
-str(res)
+res <- proteinRuler(proteinGroups_CD4_Tcells, DNA_mass_per_cell = 5.5209e-12, show_progress = FALSE)
+names(res)
+print(res$summary)
 ```
 
 Plot copy number distribution :
 ```{r}
 cond <- "CopyNumber_WT_0"
-hist(log10(res$copy_number[[cond]]), main = "", xlab = paste(cond, "(log10)"), col = rgb(1,0,0,0.25)))
+hist(log10(res$copy_number[[cond]]), main = "", xlab = paste(cond, "(log10)"), col = rgb(1,0,0,0.25))
 ```
