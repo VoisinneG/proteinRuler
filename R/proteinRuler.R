@@ -175,7 +175,7 @@ compute_protein_number <- function(df,
   
   df_int <- as.data.frame(df)
   if(is.null(col_intensity)){
-    col_int <- names(df)[grep(pattern_intensity,names(df))]
+    col_int <- names(df)[grep(pattern_intensity, names(df))]
   }else{
     col_int <- col_intensity
   }
@@ -188,7 +188,8 @@ compute_protein_number <- function(df,
   }
   
   copy_number <- vector("list", length = length(col_int))
-  
+  names(copy_number) <- col_int
+    
   I_tot <- rep(0, length(col_int))
   I_hist_tot <- rep(0, length(col_int))
   median_I_tot <- rep(0, length(col_int))
@@ -205,8 +206,8 @@ compute_protein_number <- function(df,
     
     
     if(is.null(mass_per_cell_in_pg)){
-      copy_number[[col_int[i]]] = 6.022e23 * df_int[, col_int[i]] * DNA_mass_per_cell /
-        (1e3*df[[col_mass]]*I_hist_tot[i]);
+      copy_number[[col_int[i]]] = 6.022e23 * df_int[, col_int[i]] * DNA_mass_per_cell / 
+        (1e3*df[[col_mass]]*I_hist_tot[i])
     }else{
       copy_number[[col_int[i]]] = 6.022e23 * df_int[, col_int[i]] * mass_per_cell_in_pg / 
         (1e3*df[[col_mass]]*I_tot[i])
@@ -221,8 +222,8 @@ compute_protein_number <- function(df,
     names(df_copy_number) <- paste("CopyNumber_", col_int, sep= "")
   }
   
-  df_copy_number <- cbind( df_int[col_ID], df_copy_number)
-  #names(df_copy_number) <- col_ID
+  df_copy_number <- data.frame(df[[col_ID]], df_copy_number)
+  names(df_copy_number)[1] <- col_ID
   
   summary <- data.frame(column = col_int,
                         median_Intensity = median_I_tot,
