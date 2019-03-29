@@ -76,6 +76,8 @@ proteinRuler <- function(df,
   
   ######################### Import Annotations
   
+  df_annot <- NULL
+  
   if(is.null(col_mass) | is.null(idx_histones)){
     
     id = sapply(as.character(df[[col_protein_id]]), 
@@ -206,8 +208,7 @@ compute_protein_number <- function(df,
     
     
     if(is.null(mass_per_cell_in_pg)){
-      copy_number[[col_int[i]]] = 6.022e23 * df_int[, col_int[i]] * DNA_mass_per_cell / 
-        (1e3*df[[col_mass]]*I_hist_tot[i])
+      copy_number[[col_int[i]]] = 6.022e23 * df_int[, col_int[i]] * DNA_mass_per_cell / (1e3*df[[col_mass]]*I_hist_tot[i])
     }else{
       copy_number[[col_int[i]]] = 6.022e23 * df_int[, col_int[i]] * mass_per_cell_in_pg / 
         (1e3*df[[col_mass]]*I_tot[i])
