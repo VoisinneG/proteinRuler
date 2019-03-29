@@ -8,7 +8,8 @@ proteinRuler(df, col_protein_id = "Protein IDs", sep_id = ";",
   pattern_intensity = "^Intensity.", col_intensity = NULL,
   mass_per_cell_in_pg = NULL, DNA_mass_per_cell = 5.5209e-12,
   filtering = TRUE, col_names = "Gene names", col_score = "Score",
-  Score_threshold = 0, idx_histones = NULL, col_mass = NULL, ...)
+  Score_threshold = 0, idx_histones = NULL, col_mass = NULL,
+  show_progress = TRUE, ...)
 }
 \arguments{
 \item{df}{A data.frame containing protein intensities. By default, protein intensity column names start by "Intensity." 
@@ -37,6 +38,8 @@ proteinRuler(df, col_protein_id = "Protein IDs", sep_id = ";",
 \item{idx_histones}{Row indexes corresponding to histone proteins}
 
 \item{col_mass}{Column with protein mass (in kDa)}
+
+\item{show_progress}{Show progress bar when querrying annotations from UniProt}
 
 \item{...}{additionnal parameters passed to fucntion \code{compute_protein_number()}}
 }

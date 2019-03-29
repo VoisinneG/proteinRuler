@@ -4,7 +4,7 @@ Version: 0.1.0
 Date: 2019-01-29
 Author: Guillaume Voisinne
 Maintainer: Guillaume Voisinne <voisinne@ciml.univ-mrs.fr>
-Description: The proteinRuler package allows to compute protein abundance from protein intensities using the protein ruler methodology.
+Description: Compute protein abundance from protein intensities using the protein ruler methodology.
 Imports:
   queryup
 Remotes: VoisinneG/queryup

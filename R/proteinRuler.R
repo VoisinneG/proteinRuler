@@ -14,6 +14,7 @@
 #' @param Score_threshold Threshold on protein identification score
 #' @param col_mass Column with protein mass (in kDa)
 #' @param idx_histones Row indexes corresponding to histone proteins
+#' @param show_progress Show progress bar when querrying annotations from UniProt
 #' @param ... additionnal parameters passed to fucntion \code{compute_protein_number()}
 #' @return a data.frame with protein abundances
 #' @examples
@@ -38,6 +39,7 @@ proteinRuler <- function(df,
                          Score_threshold = 0,
                          idx_histones = NULL,
                          col_mass = NULL,
+                         show_progress = TRUE,
                          ...){
   
   
@@ -77,7 +79,9 @@ proteinRuler <- function(df,
   if(is.null(col_mass) | is.null(idx_histones)){
     
     id = sapply(df[[col_protein_id]], function(x){ strsplit(x, split = sep_id)[[1]][1]})
-    df_annot <- queryup::get_annotations_uniprot(id = id, columns = c("genes", "families", "mass"))
+    df_annot <- queryup::get_annotations_uniprot(id = id, 
+                                                 columns = c("genes", "families", "mass"), 
+                                                 show_progress = show_progress)
     
     if(!is.null(df_annot)){
       #convert Mass from factors to numeric values
