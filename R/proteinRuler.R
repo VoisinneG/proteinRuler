@@ -57,10 +57,10 @@ proteinRuler <- function(df,
       stop(paste(col_names, " is not a column name\n", sep = ""))
     }
     
-    idx_filter <- c( grep("KRT",df[[col_names]]), 
-                     grep("^CON",df[[col_protein_id]]), 
-                     grep("^REV",df[[col_protein_id]]), 
-                     grep("^Biognosys",df[[col_protein_id]]),
+    idx_filter <- c( grep("KRT", as.character(df[[col_names]])), 
+                     grep("^CON", as.character(df[[col_protein_id]])), 
+                     grep("^REV", as.character(df[[col_protein_id]])), 
+                     grep("^Biognosys", as.character(df[[col_protein_id]])),
                      which(is.na(df[[col_protein_id]])))
     
     if(length(idx_filter)>0){
@@ -68,7 +68,7 @@ proteinRuler <- function(df,
     }
     
     if(col_score %in% names(df)){
-      df <- df[df[[col_score]]>Score_threshold, ]
+      df <- df[as.numeric(df[[col_score]]) > Score_threshold, ]
     }else{
       warning(paste(col_score, " is not a column name\n", sep = ""))
     }
@@ -78,7 +78,8 @@ proteinRuler <- function(df,
   
   if(is.null(col_mass) | is.null(idx_histones)){
     
-    id = sapply(df[[col_protein_id]], function(x){ strsplit(x, split = sep_id)[[1]][1]})
+    id = sapply(as.character(df[[col_protein_id]]), 
+                function(x){ strsplit(x, split = sep_id)[[1]][1]})
     df_annot <- queryup::get_annotations_uniprot(id = id, 
                                                  columns = c("genes", "families", "mass"), 
                                                  show_progress = show_progress)
@@ -119,7 +120,6 @@ proteinRuler <- function(df,
   }else{
     idx_histones <- match(histone_ids, df[[col_protein_id]])
   }
-  
   
   res <- compute_protein_number(df,
                                 col_mass = col_mass,
@@ -168,13 +168,21 @@ compute_protein_number <- function(df,
                                    col_mass = "Mass",
                                    col_ID = names(df)[1],
                                    mass_per_cell_in_pg = NULL,
-                                   DNA_mass_per_cell = 5.5209e-12 ){
+                                   DNA_mass_per_cell = 5.5209e-12,
+                                   replace_zeros_by_na = TRUE){
   
   df_int <- as.data.frame(df)
   if(is.null(col_intensity)){
     col_int <- names(df)[grep(pattern_intensity,names(df))]
   }else{
     col_int <- col_intensity
+  }
+  
+  if(replace_zero_by_na){
+    for( i in 1:length(col_int) ){
+      idx <- which( df_int[ , col_int[i]] == 0 )
+      df_int[idx , col_int[i]] <- NA
+    }
   }
   
   copy_number <- vector("list", length = length(col_int))
