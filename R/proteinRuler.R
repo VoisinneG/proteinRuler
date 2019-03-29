@@ -151,6 +151,7 @@ proteinRuler <- function(df,
 #' @param col_mass Column with protein mass (in kDa)
 #' @param mass_per_cell_in_pg Compute protein abundance using a constant mass per cell.
 #' @param DNA_mass_per_cell Mass of DNA per cell (in g)
+#' @param replace_zero_by_na Replace zero-valued intensities by NA.
 #' @return a list containing the following elements :
 #' @return \code{copy_number} : a data.frame with protein abundances
 #' @return \code{summary} : a data.frame with summary variables 
@@ -169,7 +170,7 @@ compute_protein_number <- function(df,
                                    col_ID = names(df)[1],
                                    mass_per_cell_in_pg = NULL,
                                    DNA_mass_per_cell = 5.5209e-12,
-                                   replace_zeros_by_na = TRUE){
+                                   replace_zero_by_na = TRUE){
   
   df_int <- as.data.frame(df)
   if(is.null(col_intensity)){
