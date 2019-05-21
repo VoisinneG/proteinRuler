@@ -6,7 +6,7 @@ Author: Guillaume Voisinne
 Maintainer: Guillaume Voisinne <voisinne@ciml.univ-mrs.fr>
 Description: Compute protein abundance from protein intensities using the protein ruler methodology.
 Imports:
-  queryup
+  pannot
 Remotes: VoisinneG/queryup
 LazyData: TRUE
 License: file LICENSE

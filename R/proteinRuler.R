@@ -24,7 +24,7 @@
 #' cond <- "CopyNumber_WT_0"
 #' hist(log10(res$copy_number[[cond]]), main = "",
 #' xlab = paste(cond, "(log10)"), col = rgb(1,0,0,0.25))
-#' @import queryup
+#' @import pannot
 #' @export
 proteinRuler <- function(df,
                          col_protein_id = "Protein IDs",
@@ -83,7 +83,7 @@ proteinRuler <- function(df,
     id = sapply(as.character(df[[col_protein_id]]), 
                 function(x){ strsplit(x, split = sep_id)[[1]][1]})
     
-    df_annot <- queryup::get_annotations_uniprot(id = id, 
+    df_annot <- pannot::get_annotations_uniprot(id = id, 
                                                  columns = c("genes", "families", "mass"), 
                                                  show_progress = show_progress)
     
