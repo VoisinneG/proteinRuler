@@ -240,3 +240,118 @@ compute_protein_number <- function(df,
   )
   
 }
+
+
+#' Map protein abundance using protein IDs or gene names
+#' @description Add protein abundance to an \code{InteRactome}. For multiple identifiers, 
+#' the abundance of the first match in the proteome dataset is returned.
+#' @param df a data.frame
+#' @param col_ID column of \code{df} containing protein IDs
+#' @param col_names column of \code{df} containing gene names. Only used if \code{map_gene_name = TRUE}.
+#' @param sep_primary Separator between different proteins
+#' @param sep_secondary Set of separators used sequentially (from right to left) to 
+#' identify protein IDs for each protein
+#' @param proteome_dataset Dataset containing protein abundances.
+#' @param pdata_col_ID column of \code{proteome_dataset} containing protein IDs
+#' @param pdata_col_gene_name column of \code{proteome_dataset} containing gene names
+#' @param pdata_col_copy_number column of \code{proteome_dataset} containing protein abundances
+#' @param map_gene_name logical, map protein using gene names rather than protein IDs
+#' @param updateProgress used to display progress in shiny apps
+#' protein abundances (in log10)
+#' @importFrom utils setTxtProgressBar txtProgressBar
+#' @export
+map_proteome <- function( df, 
+                            col_ID = "Protein.IDs",
+                            col_names = "names",
+                            sep_primary = ";",
+                            sep_secondary = c("|", "-"), 
+                            proteome_dataset,
+                            pdata_col_ID = "Protein.IDs",
+                            pdata_col_gene_name = "Gene.names",
+                            pdata_col_copy_number = "Copy.Number",
+                            map_gene_name = FALSE,
+                            updateProgress = NULL){
+  
+  
+  df_int <- df
+  
+  if(! col_ID %in% names(df)){
+    stop(paste(col_ID, "is not defined within the interactome"))
+  }
+  if(map_gene_name & ! col_names %in% names(df)){
+    stop(paste(col_names, "is not defined within the interactome"))
+  }
+  if(! pdata_col_ID %in% names(proteome_dataset)){
+    stop(paste(pdata_col_ID, "is not defined within the proteome"))
+  }
+  if(! pdata_col_copy_number %in% names(proteome_dataset)){
+    stop(paste(pdata_col_copy_number, "is not defined within the proteome"))
+  }
+  if(map_gene_name & ! pdata_col_gene_name %in% names(proteome_dataset)){
+    stop(paste(pdata_col_gene_name, "is not defined within the proteome"))
+  }
+  
+  
+  pdata <- proteome_dataset
+  col_map <- col_ID
+  pdata_col_map <- pdata_col_ID
+  sep_secondary_int <- sep_secondary
+  sep_primary_int <- sep_primary
+  
+  if(map_gene_name){
+    col_map <- col_names
+    pdata_col_map <- pdata_col_gene_name
+    sep_secondary_int <- NULL
+    sep_primary_int <- " "
+  }
+  
+  names <- df_int[[col_map]]
+  
+  ######### Retrieve protein abundance and compute related quantities
+  
+  idx_match_all <- rep(NA, length(names));
+  Copy_Number <- rep(NA, length(names));
+  
+  cat("Get protein abundances...\n")
+  pb <- txtProgressBar(min = 0, max = 100, style = 3)
+  
+  for( i in 1:length(names) ){
+    
+    if (is.function(updateProgress)) {
+      text <- paste0( i/length(names)*100)
+      updateProgress(value = floor(i/length(names)*100), 
+                     detail = paste(format(i/length(names)*100, digits = 0), "%", sep = ""))
+    }
+    setTxtProgressBar(pb, i/length(names)*100)
+    
+    prot_ids <- strsplit(as.character(names[i]), split = sep_primary_int, fixed = TRUE)[[1]]
+    
+    for(j in 1:length(prot_ids)){
+      
+      prot_id_int <- prot_ids[j]
+      if(length(sep_secondary_int)>0){
+        for(k in 1:length(sep_secondary_int)){
+          prot_id_int <- strsplit(prot_id_int, split = sep_secondary_int[k], fixed = TRUE)[[1]][1]
+        }
+      }
+      
+      idx_match <-grep( paste("(^|", sep_primary_int, ")", toupper(prot_id_int), "($|", sep_primary_int, ")", sep =""),
+                        toupper(as.character(pdata[[pdata_col_map]])),
+                        fixed = FALSE)
+      
+      
+      if(length(idx_match)>0){
+        idx_match_all[i] <- idx_match[1]
+        break
+      }
+    }
+    
+  }
+  close(pb)
+  
+  Copy_Number <- pdata[[pdata_col_copy_number]][idx_match_all]
+  df_int$Copy_Number <- Copy_Number
+  
+  df_int
+  
+}
