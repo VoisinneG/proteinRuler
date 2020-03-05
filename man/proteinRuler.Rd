@@ -4,22 +4,36 @@
 \alias{proteinRuler}
 \title{Compute protein abundance using the protein ruler methodology}
 \usage{
-proteinRuler(df, col_protein_id = "Protein IDs", sep_id = ";",
-  pattern_intensity = "^Intensity.", col_intensity = NULL,
-  mass_per_cell_in_pg = NULL, DNA_mass_per_cell = 5.5209e-12,
-  filtering = TRUE, col_names = "Gene names", col_score = "Score",
-  Score_threshold = 0, idx_histones = NULL, col_mass = NULL,
-  show_progress = TRUE, ...)
+proteinRuler(
+  df,
+  col_protein_id = "Protein IDs",
+  sep_id = ";",
+  pattern_intensity = "^Intensity.",
+  col_intensity = NULL,
+  mass_per_cell_in_pg = NULL,
+  DNA_mass_per_cell = 5.5209e-12,
+  filtering = TRUE,
+  col_names = "Gene names",
+  col_score = "Score",
+  Score_threshold = 0,
+  idx_histones = NULL,
+  col_mass = NULL,
+  show_progress = TRUE,
+  ...
+)
 }
 \arguments{
-\item{df}{A data.frame containing protein intensities. By default, protein intensity column names start by "Intensity." 
+\item{df}{A data.frame containing protein intensities. By default, 
+protein intensity column names start by "Intensity." 
 (use parameter \code{pattern_intensity} to change)}
 
-\item{col_protein_id}{Column with protein IDs. When several protein IDs are found, only the first one is conserved.}
+\item{col_protein_id}{Column with protein IDs. When several protein IDs are found, 
+only the first one is conserved.}
 
 \item{sep_id}{character string separating different protein IDs}
 
-\item{pattern_intensity}{Pattern (regular exrpression) used to identfy df's columns containing protein intensity values}
+\item{pattern_intensity}{Pattern (regular exrpression) used to identfy df's columns 
+containing protein intensity values}
 
 \item{col_intensity}{Names of intensity columns. Overrides \code{pattern_intensity}.}
 
@@ -35,9 +49,12 @@ proteinRuler(df, col_protein_id = "Protein IDs", sep_id = ";",
 
 \item{Score_threshold}{Threshold on protein identification score}
 
-\item{idx_histones}{Row indexes corresponding to histone proteins}
+\item{idx_histones}{Row indexes corresponding to histone proteins. If NULL, 
+histones are identified using UniProt annotations corresponding to the 
+first ID of the protein group.}
 
-\item{col_mass}{Column with protein mass (in kDa)}
+\item{col_mass}{Column with protein mass (in kDa). If NULL, protein mass are 
+retireved from UniProt using the first ID of the protein group.}
 
 \item{show_progress}{Show progress bar when querrying annotations from UniProt}
 

@@ -1,10 +1,13 @@
 #' Compute protein abundance using the protein ruler methodology
 #' @description Compute protein abundance using the protein ruler methodology
-#' @param df A data.frame containing protein intensities. By default, protein intensity column names start by "Intensity." 
+#' @param df A data.frame containing protein intensities. By default, 
+#' protein intensity column names start by "Intensity." 
 #' (use parameter \code{pattern_intensity} to change)
-#' @param col_protein_id Column with protein IDs. When several protein IDs are found, only the first one is conserved.
+#' @param col_protein_id Column with protein IDs. When several protein IDs are found, 
+#' only the first one is conserved.
 #' @param sep_id character string separating different protein IDs
-#' @param pattern_intensity Pattern (regular exrpression) used to identfy df's columns containing protein intensity values
+#' @param pattern_intensity Pattern (regular exrpression) used to identfy df's columns 
+#' containing protein intensity values
 #' @param col_intensity Names of intensity columns. Overrides \code{pattern_intensity}.
 #' @param mass_per_cell_in_pg Compute protein abundance using a constant mass per cell.
 #' @param DNA_mass_per_cell Mass of DNA per cell (in g)
@@ -12,8 +15,11 @@
 #' @param col_names Column with gene names.
 #' @param col_score Column with protein identification score
 #' @param Score_threshold Threshold on protein identification score
-#' @param col_mass Column with protein mass (in kDa)
-#' @param idx_histones Row indexes corresponding to histone proteins
+#' @param col_mass Column with protein mass (in kDa). If NULL, protein mass are 
+#' retireved from UniProt using the first ID of the protein group.
+#' @param idx_histones Row indexes corresponding to histone proteins. If NULL, 
+#' histones are identified using UniProt annotations corresponding to the 
+#' first ID of the protein group.
 #' @param show_progress Show progress bar when querrying annotations from UniProt
 #' @param ... additionnal parameters passed to fucntion \code{compute_protein_number()}
 #' @return a data.frame with protein abundances
@@ -42,23 +48,49 @@ proteinRuler <- function(df,
                          show_progress = TRUE,
                          ...){
   
+  ### Sanity checks #######################################################################
   
+  if(!is.data.frame(df)){
+    stop("df must be a data.frame")
+  }
+  
+  if(is.null(col_intensity)){
+    idx_cols <- grep(pattern_intensity, names(df))
+    if(length(idx_cols) == 0){
+      stop("Could not find pattern in column names")
+    }
+  }else{
+    if(!all(col_intensity %in% names(df))){
+      stop(paste("Some intensity columns could no be found"))
+    }
+    idx_cols <- match(col_intensity, names(df))
+  }
+  
+  if(! all(sapply(idx_cols, function(i){class(df[[i]])}) %in% "numeric")){
+    stop("Some intensity columns are not numeric")
+  }
   
   if(! col_protein_id %in% names(df)){
     stop(paste(col_protein_id, " is not a column name\n", sep = ""))
   }
   
-  histone_ids <- df[[col_protein_id]][idx_histones]
+  if(!is.null(col_mass)){
+    if(! col_mass %in% names(df)){
+      stop(paste(col_mass, " is not a column name\n", sep = ""))
+    }
+    if(!is.numeric(df[[col_mass]])){
+      stop(paste(col_mass, " column is not of class numeric\n", sep = ""))
+    }
+  }
   
-  ######################### Filter proteins
+  ### Filter proteins #######################################################################
   
   if(filtering){
     if(! col_names %in% names(df)){
       stop(paste(col_names, " is not a column name\n", sep = ""))
     }
     
-    idx_filter <- c( grep("KRT", as.character(df[[col_names]])), 
-                     grep("^CON", as.character(df[[col_protein_id]])), 
+    idx_filter <- c( grep("^CON", as.character(df[[col_protein_id]])), 
                      grep("^REV", as.character(df[[col_protein_id]])), 
                      grep("^Biognosys", as.character(df[[col_protein_id]])),
                      which(is.na(df[[col_protein_id]])))
@@ -67,14 +99,20 @@ proteinRuler <- function(df,
       df <- df[-idx_filter, ]
     }
     
-    if(col_score %in% names(df)){
-      df <- df[as.numeric(df[[col_score]]) > Score_threshold, ]
-    }else{
-      warning(paste(col_score, " is not a column name\n", sep = ""))
+    if(!is.null(col_score)){
+      if(! col_score %in% names(df)){
+        stop(paste(col_score, " is not a column name\n", sep = ""))
+      }
+      if(!is.numeric(df[[col_score]])){
+        stop(paste(col_score, " column is not of class numeric\n", sep = ""))
+      }
     }
+    
+    df <- df[df[[col_score]] > Score_threshold, ]
+    
   }
   
-  ######################### Import Annotations
+  ### Retrieve protein annotations from UniProt #############################################
   
   df_annot <- NULL
   
@@ -93,9 +131,11 @@ proteinRuler <- function(df,
       df_annot$Mass <- df_annot$Mass/1e3 # Mass in kDa
       
       
-      ########################### Identify Histone proteins
+      #### Identify Histone proteins ########################################################
       
-      u_prot_fams <- unique( strsplit(paste(as.character(df_annot$Protein.families), collapse=", "), split=", ")[[1]] ) ;
+      u_prot_fams <- unique( strsplit(paste(as.character(df_annot$Protein.families), 
+                                            collapse=", "), 
+                                      split=", ")[[1]] ) ;
       Histone_fams <- u_prot_fams[grep("^Histone H", u_prot_fams)]
       idx_hist_all<-NULL
       for(i in 1:length(Histone_fams)){
@@ -107,8 +147,9 @@ proteinRuler <- function(df,
       df_annot$is_histone[idx_hist_all] <- TRUE
       
     }else{
-      stop(paste("Querying UniProt failed. Protein mass and/or histones identity could not be inputed.", "
-                 Please try again later or use parameters 'idx_histones' and 'col_mass'instead.", sep = ""))
+      stop("Querying UniProt failed. Protein mass and/or histones identity 
+      could not be inputed..Please try again later or use parameters 
+      'idx_histones' and 'col_mass'instead.")
     }
     
   }
@@ -121,6 +162,7 @@ proteinRuler <- function(df,
   if(is.null(idx_histones)){
     idx_histones <- idx_hist_all
   }else{
+    histone_ids <- df[[col_protein_id]][idx_histones]
     idx_histones <- match(histone_ids, df[[col_protein_id]])
   }
   
@@ -145,10 +187,12 @@ proteinRuler <- function(df,
 
 #' Compute protein abundance using the protein ruler methodology
 #' @description Compute protein abundance using the protein ruler methodology
-#' @param df A data.frame containing protein intensities. By default, protein intensity column names start by "Intensity." 
+#' @param df A data.frame containing protein intensities. By default, 
+#' protein intensity column names start by "Intensity." 
 #' (use parameter \code{pattern_intensity} to change)
 #' @param idx_histones Row indexes corresponding to histone proteins
-#' @param pattern_intensity Pattern (regular exrpression) used to identfy df's columns containing protein intensity values
+#' @param pattern_intensity Pattern (regular exrpression) used to identfy df's columns 
+#' containing protein intensity values
 #' @param col_intensity Names of intensity columns. Overrides \code{pattern_intensity}.
 #' @param col_ID Column with IDs 
 #' @param col_mass Column with protein mass (in kDa)
@@ -159,10 +203,14 @@ proteinRuler <- function(df,
 #' @return \code{copy_number} : a data.frame with protein abundances
 #' @return \code{summary} : a data.frame with summary variables 
 #' @examples
+#' \dontrun{
 #' data("proteinGroups_CD4_Tcells")
 #' idx_h <- grep("^Histone H", proteinGroups_CD4_Tcells$`Protein names`)
 #' col_mass <- "Mol. weight [kDa]"
-#' res <- compute_protein_number(proteinGroups_CD4_Tcells, idx_histones = idx_h, col_mass = col_mass)
+#' res <- compute_protein_number(proteinGroups_CD4_Tcells, 
+#' idx_histones = idx_h, 
+#' col_mass = col_mass)
+#' }
 #' @importFrom stats median
 #' @export
 compute_protein_number <- function(df,
@@ -174,6 +222,44 @@ compute_protein_number <- function(df,
                                    mass_per_cell_in_pg = NULL,
                                    DNA_mass_per_cell = 5.5209e-12,
                                    replace_zero_by_na = TRUE){
+  
+  ### Sanity checks #######################################################################
+  
+  if(!is.data.frame(df)){
+    stop("df must be a data.frame")
+  }
+  
+  if(is.null(col_intensity)){
+    idx_cols <- grep(pattern_intensity, names(df))
+    if(length(idx_cols) == 0){
+      stop("Could not find pattern in column names")
+    }
+  }else{
+    if(!all(col_intensity %in% names(df))){
+      stop(paste("Some intensity columns could no be found"))
+    }
+    idx_cols <- match(col_intensity, names(df))
+  }
+  
+  if(! all(sapply(idx_cols, function(i){class(df[[i]])}) %in% "numeric")){
+    stop("Some intensity columns are not numeric")
+  }
+  
+  if(! col_ID %in% names(df)){
+    stop(paste(col_ID, " is not a column name\n", sep = ""))
+  }
+  
+  if(! col_mass %in% names(df)){
+    stop(paste(col_mass, " is not a column name\n", sep = ""))
+  }
+  
+  if(!is.numeric(df[[col_mass]])){
+    stop(paste(col_mass, " column is not of class numeric\n", sep = ""))
+  }
+    
+
+  
+  ### Compute protein copy number ###########################################################
   
   df_int <- as.data.frame(df)
   if(is.null(col_intensity)){
@@ -204,11 +290,12 @@ compute_protein_number <- function(df,
     I_hist_tot[i] <- sum(df_int[idx_histones, col_int[i]], na.rm=TRUE);
     I_tot[i] <- sum(df_int[, col_int[i]], na.rm=TRUE);
     percentage_mass_hist[i] <- I_hist_tot[i]/I_tot[i]*100;
-    prot_mass_per_cell_pg[i] <- I_tot[i]/I_hist_tot[i]*DNA_mass_per_cell*1e12; #protein mass in pg
-    
+    #protein mass in pg
+    prot_mass_per_cell_pg[i] <- I_tot[i]/I_hist_tot[i]*DNA_mass_per_cell*1e12; 
     
     if(is.null(mass_per_cell_in_pg)){
-      copy_number[[col_int[i]]] = 6.022e23 * df_int[, col_int[i]] * DNA_mass_per_cell / (1e3*df[[col_mass]]*I_hist_tot[i])
+      copy_number[[col_int[i]]] = 6.022e23 * df_int[, col_int[i]] * DNA_mass_per_cell / 
+        (1e3*df[[col_mass]]*I_hist_tot[i])
     }else{
       copy_number[[col_int[i]]] = 6.022e23 * df_int[, col_int[i]] * mass_per_cell_in_pg / 
         (1e3*df[[col_mass]]*I_tot[i])
@@ -247,14 +334,16 @@ compute_protein_number <- function(df,
 #' the abundance of the first match in the proteome dataset is returned.
 #' @param df a data.frame
 #' @param col_ID column of \code{df} containing protein IDs
-#' @param col_names column of \code{df} containing gene names. Only used if \code{map_gene_name = TRUE}.
+#' @param col_names column of \code{df} containing gene names. 
+#' Only used if \code{map_gene_name = TRUE}.
 #' @param sep_primary Separator between different proteins
 #' @param sep_secondary Set of separators used sequentially (from right to left) to 
 #' identify protein IDs for each protein
 #' @param proteome_dataset Dataset containing protein abundances.
 #' @param pdata_col_ID column of \code{proteome_dataset} containing protein IDs
 #' @param pdata_col_gene_name column of \code{proteome_dataset} containing gene names
-#' @param pdata_col_copy_number column of \code{proteome_dataset} containing protein abundances
+#' @param pdata_col_copy_number column of \code{proteome_dataset} containing 
+#' protein abundances
 #' @param map_gene_name logical, map protein using gene names rather than protein IDs
 #' @param updateProgress used to display progress in shiny apps
 #' protein abundances (in log10)
@@ -272,6 +361,11 @@ map_proteome <- function( df,
                             map_gene_name = FALSE,
                             updateProgress = NULL){
   
+  ### Sanity checks #######################################################################
+  
+  if(!is.data.frame(df)){
+    stop("df must be a data.frame")
+  }
   
   df_int <- df
   
@@ -307,7 +401,7 @@ map_proteome <- function( df,
   
   names <- df_int[[col_map]]
   
-  ######### Retrieve protein abundance and compute related quantities
+  ### Map proteins #########################################################################
   
   idx_match_all <- rep(NA, length(names));
   Copy_Number <- rep(NA, length(names));
@@ -331,11 +425,14 @@ map_proteome <- function( df,
       prot_id_int <- prot_ids[j]
       if(length(sep_secondary_int)>0){
         for(k in 1:length(sep_secondary_int)){
-          prot_id_int <- strsplit(prot_id_int, split = sep_secondary_int[k], fixed = TRUE)[[1]][1]
+          prot_id_int <- strsplit(prot_id_int, 
+                                  split = sep_secondary_int[k], 
+                                  fixed = TRUE)[[1]][1]
         }
       }
       
-      idx_match <-grep( paste("(^|", sep_primary_int, ")", toupper(prot_id_int), "($|", sep_primary_int, ")", sep =""),
+      idx_match <-grep( paste("(^|", sep_primary_int, ")", 
+                              toupper(prot_id_int), "($|", sep_primary_int, ")", sep =""),
                         toupper(as.character(pdata[[pdata_col_map]])),
                         fixed = FALSE)
       

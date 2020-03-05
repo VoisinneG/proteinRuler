@@ -1,17 +1,18 @@
 R package: proteinRuler
 ================
 Guillaume Voisinne
-2019 - 03 - 29
+2020 - 03 - 05
 
-[![Travis-CI Build Status](https://travis-ci.org/VoisinneG/proteinruler.svg?branch=master)](https://travis-ci.org/VoisinneG/queryup)
+[![Travis-CI Build
+Status](https://travis-ci.org/VoisinneG/proteinruler.svg?branch=master)](https://travis-ci.org/VoisinneG/queryup)
 
-R Package : proteinRuler
-========================
+# R Package : proteinRuler
 
-Compute protein abundance from protein intensities using the 'protein ruler' methodology (See article by [Wisniewski et. al](https://doi.org/10.1074/mcp.M113.037309)).
+Compute protein abundance from protein intensities using the ‘protein
+ruler’ methodology (See article by [Wisniewski et.
+al](https://doi.org/10.1074/mcp.M113.037309)).
 
-Install
--------
+## Install
 
 Install the package from github using devtools:
 
@@ -20,14 +21,22 @@ devtools::install_github("VoisinneG/proteinRuler")
 library(proteinRuler)
 ```
 
-Examples
---------
+    ## Warning: replacing previous import 'IRanges::desc' by 'plyr::desc' when loading
+    ## 'PSICQUIC'
 
-Import a dataset containing protein intensities and protein IDs and compute protein abundances :
+## Examples
+
+Import a dataset containing protein intensities and protein IDs and
+compute protein abundances :
 
 ``` r
 data("proteinGroups_CD4_Tcells")
 res <- proteinRuler(proteinGroups_CD4_Tcells, DNA_mass_per_cell = 5.5209e-12, show_progress = FALSE)
+```
+
+    ## Getting annotations from UniProt...
+
+``` r
 names(res)
 ```
 
@@ -57,4 +66,4 @@ cond <- "CopyNumber_WT_0"
 hist(log10(res$copy_number[[cond]]), main = "", xlab = paste(cond, "(log10)"), col = rgb(1,0,0,0.25))
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-4-1.png)
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->

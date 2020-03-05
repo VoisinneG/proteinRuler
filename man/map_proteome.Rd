@@ -4,18 +4,27 @@
 \alias{map_proteome}
 \title{Map protein abundance using protein IDs or gene names}
 \usage{
-map_proteome(df, col_ID = "Protein.IDs", col_names = "names",
-  sep_primary = ";", sep_secondary = c("|", "-"), proteome_dataset,
-  pdata_col_ID = "Protein.IDs", pdata_col_gene_name = "Gene.names",
-  pdata_col_copy_number = "Copy.Number", map_gene_name = FALSE,
-  updateProgress = NULL)
+map_proteome(
+  df,
+  col_ID = "Protein.IDs",
+  col_names = "names",
+  sep_primary = ";",
+  sep_secondary = c("|", "-"),
+  proteome_dataset,
+  pdata_col_ID = "Protein.IDs",
+  pdata_col_gene_name = "Gene.names",
+  pdata_col_copy_number = "Copy.Number",
+  map_gene_name = FALSE,
+  updateProgress = NULL
+)
 }
 \arguments{
 \item{df}{a data.frame}
 
 \item{col_ID}{column of \code{df} containing protein IDs}
 
-\item{col_names}{column of \code{df} containing gene names. Only used if \code{map_gene_name = TRUE}.}
+\item{col_names}{column of \code{df} containing gene names. 
+Only used if \code{map_gene_name = TRUE}.}
 
 \item{sep_primary}{Separator between different proteins}
 
@@ -28,7 +37,8 @@ identify protein IDs for each protein}
 
 \item{pdata_col_gene_name}{column of \code{proteome_dataset} containing gene names}
 
-\item{pdata_col_copy_number}{column of \code{proteome_dataset} containing protein abundances}
+\item{pdata_col_copy_number}{column of \code{proteome_dataset} containing 
+protein abundances}
 
 \item{map_gene_name}{logical, map protein using gene names rather than protein IDs}
 
