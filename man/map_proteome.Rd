@@ -20,7 +20,7 @@ map_proteome(
 )
 }
 \arguments{
-\item{df}{a data.frame}
+\item{df}{a data.frame or a list}
 
 \item{col_ID}{column of \code{df} containing protein IDs}
 

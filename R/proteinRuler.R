@@ -332,7 +332,7 @@ compute_protein_number <- function(df,
 #' Map protein abundance using protein IDs or gene names
 #' @description Add protein abundance to an \code{InteRactome}. For multiple identifiers, 
 #' the abundance of the first match in the proteome dataset is returned.
-#' @param df a data.frame
+#' @param df a data.frame or a list
 #' @param col_ID column of \code{df} containing protein IDs
 #' @param col_names column of \code{df} containing gene names. 
 #' Only used if \code{map_gene_name = TRUE}.
@@ -372,10 +372,6 @@ map_proteome <- function( df,
                             updateProgress = NULL){
   
   ### Sanity checks #######################################################################
-  
-  if(!is.data.frame(df)){
-    stop("df must be a data.frame")
-  }
   
   df_int <- df
   
