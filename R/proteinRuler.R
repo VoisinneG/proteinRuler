@@ -336,9 +336,10 @@ compute_protein_number <- function(df,
 #' @param col_ID column of \code{df} containing protein IDs
 #' @param col_names column of \code{df} containing gene names. 
 #' Only used if \code{map_gene_name = TRUE}.
-#' @param sep_primary Separator between different proteins
+#' @param sep_primary Separator between different proteins in \code{df}
 #' @param sep_secondary Set of separators used sequentially (from right to left) to 
-#' identify protein IDs for each protein
+#' identify protein IDs for each protein in \code{df}
+#' @param pdata_sep Separator between different proteins in \code{proteome_dataset}
 #' @param proteome_dataset Dataset containing protein abundances.
 #' @param pdata_col_ID column of \code{proteome_dataset} containing protein IDs
 #' @param pdata_col_gene_name column of \code{proteome_dataset} containing gene names
@@ -348,13 +349,22 @@ compute_protein_number <- function(df,
 #' @param updateProgress used to display progress in shiny apps
 #' protein abundances (in log10)
 #' @importFrom utils setTxtProgressBar txtProgressBar
+#' @examples 
+#' names <- LETTERS
+#' names[3] <- "Z;A"
+#' copies <- runif(length(LETTERS), 0, 100)
+#' proteome <- data.frame(names, copies, stringsAsFactors = FALSE)
+#' names(proteome) <- c("Gene.names", "Copy.Number")
+#' df <- data.frame("names" = c("C", "M", "Z", "A", "KL Z;A"))
+#' res <- map_proteome(df, col_names = "names", proteome_dataset = proteome, map_gene_name = TRUE)
 #' @export
 map_proteome <- function( df, 
                             col_ID = "Protein.IDs",
                             col_names = "names",
-                            sep_primary = ";",
-                            sep_secondary = c("|", "-"), 
+                            sep_primary = NULL,
+                            sep_secondary = NULL,
                             proteome_dataset,
+                            pdata_sep = ";",
                             pdata_col_ID = "Protein.IDs",
                             pdata_col_gene_name = "Gene.names",
                             pdata_col_copy_number = "Copy.Number",
@@ -369,13 +379,15 @@ map_proteome <- function( df,
   
   df_int <- df
   
-  if(! col_ID %in% names(df)){
+  
+  if(! map_gene_name & ! col_ID %in% names(df)){
     stop(paste(col_ID, "is not defined within the interactome"))
   }
+  
   if(map_gene_name & ! col_names %in% names(df)){
     stop(paste(col_names, "is not defined within the interactome"))
   }
-  if(! pdata_col_ID %in% names(proteome_dataset)){
+  if(! map_gene_name & ! pdata_col_ID %in% names(proteome_dataset)){
     stop(paste(pdata_col_ID, "is not defined within the proteome"))
   }
   if(! pdata_col_copy_number %in% names(proteome_dataset)){
@@ -387,16 +399,29 @@ map_proteome <- function( df,
   
   
   pdata <- proteome_dataset
+  
   col_map <- col_ID
   pdata_col_map <- pdata_col_ID
-  sep_secondary_int <- sep_secondary
-  sep_primary_int <- sep_primary
   
   if(map_gene_name){
     col_map <- col_names
     pdata_col_map <- pdata_col_gene_name
-    sep_secondary_int <- NULL
-    sep_primary_int <- " "
+    
+  }
+  
+  if(is.null(sep_primary)){
+    sep_primary_int <- sep_primary
+  }
+  if(is.null(sep_secondary)){
+    sep_secondary_int <- sep_secondary
+  }
+  
+  if(map_gene_name){
+    sep_secondary_int <- " "
+    sep_primary_int <- ";"
+  }else{
+    sep_secondary_int <- c("|", "-")
+    sep_primary_int <- ";"
   }
   
   names <- df_int[[col_map]]
@@ -431,16 +456,25 @@ map_proteome <- function( df,
         }
       }
       
-      idx_match <-grep( paste("(^|", sep_primary_int, ")", 
-                              toupper(prot_id_int), "($|", sep_primary_int, ")", sep =""),
-                        toupper(as.character(pdata[[pdata_col_map]])),
-                        fixed = FALSE)
-      
-      
-      if(length(idx_match)>0){
-        idx_match_all[i] <- idx_match[1]
+      idx_match <-match_multi(x = toupper(prot_id_int), 
+                              y = toupper(as.character(pdata[[pdata_col_map]])),
+                              sep = pdata_sep)
+      if(!is.na(idx_match)){
+        idx_match_all[i] <- idx_match
         break
       }
+      
+      # idx_match <-grep( paste("(^|", sep_primary_int, ")", 
+      #                         toupper(prot_id_int), "($|", sep_primary_int, ")", sep =""),
+      #                   toupper(as.character(pdata[[pdata_col_map]])),
+      #                   fixed = FALSE)
+      # 
+      # 
+      # if(length(idx_match)>0){
+      #   idx_match_all[i] <- idx_match[1]
+      #   break
+      # }
+      
     }
     
   }
@@ -451,4 +485,33 @@ map_proteome <- function( df,
   
   df_int
   
+}
+
+#' Extension of the base 'match' function
+#' @description Extension of the base 'match' function to the case where 
+#' elements of y can contain multiple items to be matched
+#' @param x a character vector
+#' @param y a character vector
+#' @param sep character separating different items to be matched in a given y element
+#' @return a numeric vector with matching indices
+#' @examples
+#' x <- c("a", "b")
+#' y <- c( "bb", "c;b", "aa", "c;a;b")
+#' match_multi(x=x, y=y, sep = ";")
+#' @export
+match_multi <- function(x, y, sep=";"){
+  if(length(x)>1){
+    return(sapply(x, function(x0){match_multi(x0, y, sep = sep)} ))
+  }else{
+    idx <- grep( paste("(^|", sep,")", 
+                       x, 
+                       "($|",sep,")", 
+                       sep = ""), 
+                 y)
+    if(length(idx)>0){
+      return(idx[1])
+    }else{
+      return(NA)
+    }
+  }
 }

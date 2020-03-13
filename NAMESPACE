@@ -2,6 +2,7 @@
 
 export(compute_protein_number)
 export(map_proteome)
+export(match_multi)
 export(proteinRuler)
 import(pannot)
 importFrom(stats,median)
