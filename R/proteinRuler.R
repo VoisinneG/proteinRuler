@@ -346,6 +346,7 @@ compute_protein_number <- function(df,
 #' @param pdata_col_copy_number column of \code{proteome_dataset} containing 
 #' protein abundances
 #' @param map_gene_name logical, map protein using gene names rather than protein IDs
+#' @param return_indexes logical, return vector of matching indexes
 #' @param updateProgress used to display progress in shiny apps
 #' protein abundances (in log10)
 #' @importFrom utils setTxtProgressBar txtProgressBar
@@ -356,7 +357,7 @@ compute_protein_number <- function(df,
 #' proteome <- data.frame(names, copies, stringsAsFactors = FALSE)
 #' names(proteome) <- c("Gene.names", "Copy.Number")
 #' df <- data.frame("names" = c("C", "M", "Z", "A", "KL Z;A"))
-#' res <- map_proteome(df, col_names = "names", proteome_dataset = proteome, map_gene_name = TRUE)
+#' res <- map_proteome(df, col_names = "names", proteome_dataset = proteome, map_gene_name = TRUE)$df
 #' @export
 map_proteome <- function( df, 
                             col_ID = "Protein.IDs",
@@ -369,6 +370,7 @@ map_proteome <- function( df,
                             pdata_col_gene_name = "Gene.names",
                             pdata_col_copy_number = "Copy.Number",
                             map_gene_name = FALSE,
+                            return_indexes = FALSE,
                             updateProgress = NULL){
   
   ### Sanity checks #######################################################################
@@ -479,7 +481,11 @@ map_proteome <- function( df,
   Copy_Number <- pdata[[pdata_col_copy_number]][idx_match_all]
   df_int$Copy_Number <- Copy_Number
   
-  df_int
+  if(return_indexes){
+    return(idx_match_all)
+  }else{
+    return(df_int)
+  }
   
 }
 

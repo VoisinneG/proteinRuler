@@ -16,6 +16,7 @@ map_proteome(
   pdata_col_gene_name = "Gene.names",
   pdata_col_copy_number = "Copy.Number",
   map_gene_name = FALSE,
+  return_indexes = FALSE,
   updateProgress = NULL
 )
 }
@@ -45,6 +46,8 @@ protein abundances}
 
 \item{map_gene_name}{logical, map protein using gene names rather than protein IDs}
 
+\item{return_indexes}{logical, return vector of matching indexes}
+
 \item{updateProgress}{used to display progress in shiny apps
 protein abundances (in log10)}
 }
@@ -59,5 +62,5 @@ copies <- runif(length(LETTERS), 0, 100)
 proteome <- data.frame(names, copies, stringsAsFactors = FALSE)
 names(proteome) <- c("Gene.names", "Copy.Number")
 df <- data.frame("names" = c("C", "M", "Z", "A", "KL Z;A"))
-res <- map_proteome(df, col_names = "names", proteome_dataset = proteome, map_gene_name = TRUE)
+res <- map_proteome(df, col_names = "names", proteome_dataset = proteome, map_gene_name = TRUE)$df
 }
