@@ -62,5 +62,5 @@ copies <- runif(length(LETTERS), 0, 100)
 proteome <- data.frame(names, copies, stringsAsFactors = FALSE)
 names(proteome) <- c("Gene.names", "Copy.Number")
 df <- data.frame("names" = c("C", "M", "Z", "A", "KL Z;A"))
-res <- map_proteome(df, col_names = "names", proteome_dataset = proteome, map_gene_name = TRUE)$df
+res <- map_proteome(df, col_names = "names", proteome_dataset = proteome, map_gene_name = TRUE)
 }

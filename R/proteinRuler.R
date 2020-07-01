@@ -357,7 +357,7 @@ compute_protein_number <- function(df,
 #' proteome <- data.frame(names, copies, stringsAsFactors = FALSE)
 #' names(proteome) <- c("Gene.names", "Copy.Number")
 #' df <- data.frame("names" = c("C", "M", "Z", "A", "KL Z;A"))
-#' res <- map_proteome(df, col_names = "names", proteome_dataset = proteome, map_gene_name = TRUE)$df
+#' res <- map_proteome(df, col_names = "names", proteome_dataset = proteome, map_gene_name = TRUE)
 #' @export
 map_proteome <- function( df, 
                             col_ID = "Protein.IDs",
@@ -407,13 +407,6 @@ map_proteome <- function( df,
     
   }
   
-  if(is.null(sep_primary)){
-    sep_primary_int <- sep_primary
-  }
-  if(is.null(sep_secondary)){
-    sep_secondary_int <- sep_secondary
-  }
-  
   if(map_gene_name){
     sep_secondary_int <- " "
     sep_primary_int <- ";"
@@ -421,6 +414,14 @@ map_proteome <- function( df,
     sep_secondary_int <- c("|", "-")
     sep_primary_int <- ";"
   }
+  
+  if(!is.null(sep_primary)){
+    sep_primary_int <- sep_primary
+  }
+  if(!is.null(sep_secondary)){
+    sep_secondary_int <- sep_secondary
+  }
+  
   
   names <- df_int[[col_map]]
   
@@ -454,13 +455,17 @@ map_proteome <- function( df,
         }
       }
       
-      idx_match <-match_multi(x = toupper(prot_id_int), 
+      idx_match <- match_multi(x = toupper(prot_id_int), 
                               y = toupper(as.character(pdata[[pdata_col_map]])),
-                              sep = pdata_sep)
-      if(!is.na(idx_match)){
-        idx_match_all[i] <- idx_match
-        break
+                              sep_y = pdata_sep, sep_x = NULL)
+      
+      if(length(idx_match)>0){
+        if(!is.na(idx_match[1])){
+          idx_match_all[i] <- idx_match[1]
+          break
+        }
       }
+      
       
       # idx_match <-grep( paste("(^|", sep_primary_int, ")", 
       #                         toupper(prot_id_int), "($|", sep_primary_int, ")", sep =""),
@@ -491,29 +496,35 @@ map_proteome <- function( df,
 
 #' Extension of the base 'match' function
 #' @description Extension of the base 'match' function to the case where 
-#' elements of y can contain multiple items to be matched
+#' elements of x and y can contain multiple items to be matched. 
+#' Only the first match for each x element is returned.
 #' @param x a character vector
 #' @param y a character vector
-#' @param sep character separating different items to be matched in a given y element
+#' @param sep_x character separating different items to be matched in a given x element
+#' @param sep_y character separating different items to be matched in a given y element
 #' @return a numeric vector with matching indices
 #' @examples
-#' x <- c("a", "b")
+#' x <- c("a;aa", "b")
 #' y <- c( "bb", "c;b", "aa", "c;a;b")
-#' match_multi(x=x, y=y, sep = ";")
+#' match_multi(x=x, y=y, sep_y = ";")
 #' @export
-match_multi <- function(x, y, sep=";"){
+match_multi <- function(x, y, sep_y=";", sep_x = NULL){
   if(length(x)>1){
-    return(sapply(x, function(x0){match_multi(x0, y, sep = sep)} ))
+    return(sapply(x, function(x0){match_multi(x0, y, sep_x = sep_x, sep_y = sep_y)} ))
   }else{
-    idx <- grep( paste("(^|", sep,")", 
-                       x, 
-                       "($|",sep,")", 
-                       sep = ""), 
-                 y)
-    if(length(idx)>0){
-      return(idx[1])
-    }else{
-      return(NA)
+    x_split <- ifelse(is.null(sep_x), x, strsplit(x, split = sep_x)[[1]])
+    idx <- NA
+    for(xs in x_split){
+      idx <- grep( paste("(^|", sep_y,")", 
+                         xs, 
+                         "($|",sep_y,")", 
+                         sep = ""), 
+                   y)
+      if(length(idx)>0){
+        break
+      }
     }
+    if(length(idx)==0){idx <- NA}
+    return(idx[1])
   }
 }

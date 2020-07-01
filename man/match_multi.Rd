@@ -4,24 +4,27 @@
 \alias{match_multi}
 \title{Extension of the base 'match' function}
 \usage{
-match_multi(x, y, sep = ";")
+match_multi(x, y, sep_y = ";", sep_x = NULL)
 }
 \arguments{
 \item{x}{a character vector}
 
 \item{y}{a character vector}
 
-\item{sep}{character separating different items to be matched in a given y element}
+\item{sep_y}{character separating different items to be matched in a given y element}
+
+\item{sep_x}{character separating different items to be matched in a given x element}
 }
 \value{
 a numeric vector with matching indices
 }
 \description{
 Extension of the base 'match' function to the case where 
-elements of y can contain multiple items to be matched
+elements of x and y can contain multiple items to be matched. 
+Only the first match for each x element is returned.
 }
 \examples{
-x <- c("a", "b")
+x <- c("a;aa", "b")
 y <- c( "bb", "c;b", "aa", "c;a;b")
-match_multi(x=x, y=y, sep = ";")
+match_multi(x=x, y=y, sep_y = ";")
 }

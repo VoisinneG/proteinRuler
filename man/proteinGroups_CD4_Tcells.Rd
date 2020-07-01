@@ -5,12 +5,10 @@
 \alias{proteinGroups_CD4_Tcells}
 \title{Characterization of protein groups identified from lysates of mouse effector CD4+ 
 T cells duting the course of TCR stimulation}
-\format{
-A data frame with 6404 rows (protein groups) and 120 variables:
+\format{A data frame with 6404 rows (protein groups) and 120 variables:
 
 See the \href{ftp://ftp.lrz.de/transfer/proteomics/Phospho_Library/archive/MaxQuant/LibraryResults/EtdNoFilter/combined/txt/tables.pdf}{Maxquant documentation}
-for the description of the different variables
-}
+for the description of the different variables}
 \usage{
 proteinGroups_CD4_Tcells
 }
