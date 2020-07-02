@@ -10,7 +10,7 @@ proteinRuler(
   sep_id = ";",
   pattern_intensity = "^Intensity.",
   col_intensity = NULL,
-  mass_per_cell_in_pg = NULL,
+  mass_per_cell_in_g = NULL,
   DNA_mass_per_cell = 5.5209e-12,
   filtering = TRUE,
   col_names = "Gene names",
@@ -37,7 +37,7 @@ containing protein intensity values}
 
 \item{col_intensity}{Names of intensity columns. Overrides \code{pattern_intensity}.}
 
-\item{mass_per_cell_in_pg}{Compute protein abundance using a constant mass per cell.}
+\item{mass_per_cell_in_g}{Compute protein abundance using a constant mass per cell (in g).}
 
 \item{DNA_mass_per_cell}{Mass of DNA per cell (in g)}
 

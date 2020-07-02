@@ -9,7 +9,7 @@
 #' @param pattern_intensity Pattern (regular exrpression) used to identfy df's columns 
 #' containing protein intensity values
 #' @param col_intensity Names of intensity columns. Overrides \code{pattern_intensity}.
-#' @param mass_per_cell_in_pg Compute protein abundance using a constant mass per cell.
+#' @param mass_per_cell_in_g Compute protein abundance using a constant mass per cell (in g).
 #' @param DNA_mass_per_cell Mass of DNA per cell (in g)
 #' @param filtering Filter out contaminants and poorly scored proteins.
 #' @param col_names Column with gene names.
@@ -37,7 +37,7 @@ proteinRuler <- function(df,
                          sep_id = ";",
                          pattern_intensity = "^Intensity.",
                          col_intensity = NULL,
-                         mass_per_cell_in_pg = NULL,
+                         mass_per_cell_in_g = NULL,
                          DNA_mass_per_cell = 5.5209e-12,
                          filtering = TRUE,
                          col_names = "Gene names",
@@ -172,7 +172,7 @@ proteinRuler <- function(df,
                                 pattern_intensity = pattern_intensity,
                                 col_intensity = col_intensity,
                                 col_ID = col_protein_id,
-                                mass_per_cell_in_pg = mass_per_cell_in_pg,
+                                mass_per_cell_in_g = mass_per_cell_in_g,
                                 DNA_mass_per_cell = DNA_mass_per_cell,
                                 ...)
   
@@ -196,7 +196,7 @@ proteinRuler <- function(df,
 #' @param col_intensity Names of intensity columns. Overrides \code{pattern_intensity}.
 #' @param col_ID Column with IDs 
 #' @param col_mass Column with protein mass (in kDa)
-#' @param mass_per_cell_in_pg Compute protein abundance using a constant mass per cell.
+#' @param mass_per_cell_in_g Compute protein abundance using a constant mass per cell (in g).
 #' @param DNA_mass_per_cell Mass of DNA per cell (in g)
 #' @param replace_zero_by_na Replace zero-valued intensities by NA.
 #' @return a list containing the following elements :
@@ -219,7 +219,7 @@ compute_protein_number <- function(df,
                                    col_intensity = NULL, 
                                    col_mass = "Mass",
                                    col_ID = names(df)[1],
-                                   mass_per_cell_in_pg = NULL,
+                                   mass_per_cell_in_g = NULL,
                                    DNA_mass_per_cell = 5.5209e-12,
                                    replace_zero_by_na = TRUE){
   
@@ -293,11 +293,11 @@ compute_protein_number <- function(df,
     #protein mass in pg
     prot_mass_per_cell_pg[i] <- I_tot[i]/I_hist_tot[i]*DNA_mass_per_cell*1e12; 
     
-    if(is.null(mass_per_cell_in_pg)){
+    if(is.null(mass_per_cell_in_g)){
       copy_number[[col_int[i]]] = 6.022e23 * df_int[, col_int[i]] * DNA_mass_per_cell / 
         (1e3*df[[col_mass]]*I_hist_tot[i])
     }else{
-      copy_number[[col_int[i]]] = 6.022e23 * df_int[, col_int[i]] * mass_per_cell_in_pg / 
+      copy_number[[col_int[i]]] = 6.022e23 * df_int[, col_int[i]] * mass_per_cell_in_g / 
         (1e3*df[[col_mass]]*I_tot[i])
     }
   }

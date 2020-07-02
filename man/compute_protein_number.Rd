@@ -11,7 +11,7 @@ compute_protein_number(
   col_intensity = NULL,
   col_mass = "Mass",
   col_ID = names(df)[1],
-  mass_per_cell_in_pg = NULL,
+  mass_per_cell_in_g = NULL,
   DNA_mass_per_cell = 5.5209e-12,
   replace_zero_by_na = TRUE
 )
@@ -32,7 +32,7 @@ containing protein intensity values}
 
 \item{col_ID}{Column with IDs}
 
-\item{mass_per_cell_in_pg}{Compute protein abundance using a constant mass per cell.}
+\item{mass_per_cell_in_g}{Compute protein abundance using a constant mass per cell (in g).}
 
 \item{DNA_mass_per_cell}{Mass of DNA per cell (in g)}
 
