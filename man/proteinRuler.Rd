@@ -39,7 +39,8 @@ containing protein intensity values}
 
 \item{mass_per_cell_in_g}{Compute protein abundance using a constant mass per cell (in g).}
 
-\item{DNA_mass_per_cell}{Mass of DNA per cell (in g)}
+\item{DNA_mass_per_cell}{Mass of DNA per cell (in g). Set to 5.5pg 
+(corresponding to murine cells) by default}
 
 \item{filtering}{Filter out contaminants and poorly scored proteins.}
 

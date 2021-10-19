@@ -10,7 +10,8 @@
 #' containing protein intensity values
 #' @param col_intensity Names of intensity columns. Overrides \code{pattern_intensity}.
 #' @param mass_per_cell_in_g Compute protein abundance using a constant mass per cell (in g).
-#' @param DNA_mass_per_cell Mass of DNA per cell (in g)
+#' @param DNA_mass_per_cell Mass of DNA per cell (in g). Set to 5.5pg 
+#' (corresponding to murine cells) by default
 #' @param filtering Filter out contaminants and poorly scored proteins.
 #' @param col_names Column with gene names.
 #' @param col_score Column with protein identification score
