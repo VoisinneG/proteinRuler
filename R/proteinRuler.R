@@ -107,9 +107,15 @@ proteinRuler <- function(df,
       if(!is.numeric(df[[col_score]])){
         stop(paste(col_score, " column is not of class numeric\n", sep = ""))
       }
+      if(!is.numeric(Score_threshold)){
+        stop("Parameter 'Score_threshold' is not numeric\n", sep = "")
+      }
+      
+      df <- df[df[[col_score]] > Score_threshold, ]
+      
     }
     
-    df <- df[df[[col_score]] > Score_threshold, ]
+   
     
   }
   
