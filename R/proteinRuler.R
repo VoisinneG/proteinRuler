@@ -49,7 +49,7 @@ proteinRuler <- function(df,
                          show_progress = TRUE,
                          ...){
   
-  ### Sanity checks #######################################################################
+  ### Sanity checks ################################################################################
   
   if(!is.data.frame(df)){
     stop("df must be a data.frame")
@@ -84,7 +84,7 @@ proteinRuler <- function(df,
     }
   }
   
-  ### Filter proteins #######################################################################
+  ### Filter proteins ##############################################################################
   
   if(filtering){
     if(! col_names %in% names(df)){
@@ -119,7 +119,7 @@ proteinRuler <- function(df,
     
   }
   
-  ### Retrieve protein annotations from UniProt #############################################
+  ### Retrieve protein annotations from UniProt ####################################################
   
   df_annot <- NULL
   
@@ -129,7 +129,9 @@ proteinRuler <- function(df,
                 function(x){ strsplit(x, split = sep_id)[[1]][1]})
     
     df_annot <- pannot::get_annotations_uniprot(id = id, 
-                                                 columns = c("genes", "families", "mass"), 
+                                                 columns = c("gene_names", 
+                                                             "protein_families", 
+                                                             "mass"), 
                                                  show_progress = show_progress)
     
     if(!is.null(df_annot)){
@@ -138,7 +140,7 @@ proteinRuler <- function(df,
       df_annot$Mass <- df_annot$Mass/1e3 # Mass in kDa
       
       
-      #### Identify Histone proteins ########################################################
+      #### Identify Histone proteins ###############################################################
       
       u_prot_fams <- unique( strsplit(paste(as.character(df_annot$Protein.families), 
                                             collapse=", "), 
@@ -230,7 +232,7 @@ compute_protein_number <- function(df,
                                    DNA_mass_per_cell = 5.5209e-12,
                                    replace_zero_by_na = TRUE){
   
-  ### Sanity checks #######################################################################
+  ### Sanity checks ################################################################################
   
   if(!is.data.frame(df)){
     stop("df must be a data.frame")
@@ -266,7 +268,7 @@ compute_protein_number <- function(df,
     
 
   
-  ### Compute protein copy number ###########################################################
+  ### Compute protein copy number ##################################################################
   
   df_int <- as.data.frame(df)
   if(is.null(col_intensity)){
@@ -297,6 +299,7 @@ compute_protein_number <- function(df,
     I_hist_tot[i] <- sum(df_int[idx_histones, col_int[i]], na.rm=TRUE);
     I_tot[i] <- sum(df_int[, col_int[i]], na.rm=TRUE);
     percentage_mass_hist[i] <- I_hist_tot[i]/I_tot[i]*100;
+    
     #protein mass in pg
     prot_mass_per_cell_pg[i] <- I_tot[i]/I_hist_tot[i]*DNA_mass_per_cell*1e12; 
     
@@ -328,10 +331,7 @@ compute_protein_number <- function(df,
                         protein_mass_per_cell_pg = prot_mass_per_cell_pg
   )
   
-  return(list("copy_number" = df_copy_number, 
-              "summary" = summary
-  )
-  )
+  return(list("copy_number" = df_copy_number, "summary" = summary))
   
 }
 
@@ -380,15 +380,13 @@ map_proteome <- function( df,
                             return_indexes = FALSE,
                             updateProgress = NULL){
   
-  ### Sanity checks #######################################################################
+  ### Sanity checks ################################################################################
   
   df_int <- df
-  
   
   if(! map_gene_name & ! col_ID %in% names(df)){
     stop(paste(col_ID, "is not defined within the interactome"))
   }
-  
   if(map_gene_name & ! col_names %in% names(df)){
     stop(paste(col_names, "is not defined within the interactome"))
   }
@@ -401,7 +399,6 @@ map_proteome <- function( df,
   if(map_gene_name & ! pdata_col_gene_name %in% names(proteome_dataset)){
     stop(paste(pdata_col_gene_name, "is not defined within the proteome"))
   }
-  
   
   pdata <- proteome_dataset
   
@@ -432,7 +429,7 @@ map_proteome <- function( df,
   
   names <- df_int[[col_map]]
   
-  ### Map proteins #########################################################################
+  ### Map proteins #################################################################################
   
   idx_match_all <- rep(NA, length(names));
   Copy_Number <- rep(NA, length(names));
@@ -473,18 +470,6 @@ map_proteome <- function( df,
         }
       }
       
-      
-      # idx_match <-grep( paste("(^|", sep_primary_int, ")", 
-      #                         toupper(prot_id_int), "($|", sep_primary_int, ")", sep =""),
-      #                   toupper(as.character(pdata[[pdata_col_map]])),
-      #                   fixed = FALSE)
-      # 
-      # 
-      # if(length(idx_match)>0){
-      #   idx_match_all[i] <- idx_match[1]
-      #   break
-      # }
-      
     }
     
   }
@@ -495,10 +480,10 @@ map_proteome <- function( df,
   
   if(return_indexes){
     return(idx_match_all)
-  }else{
-    return(df_int)
   }
   
+  return(df_int)
+
 }
 
 #' Extension of the base 'match' function
@@ -516,22 +501,26 @@ map_proteome <- function( df,
 #' match_multi(x=x, y=y, sep_y = ";")
 #' @export
 match_multi <- function(x, y, sep_y=";", sep_x = NULL){
+  
   if(length(x)>1){
     return(sapply(x, function(x0){match_multi(x0, y, sep_x = sep_x, sep_y = sep_y)} ))
-  }else{
-    x_split <- ifelse(is.null(sep_x), x, strsplit(x, split = sep_x)[[1]])
-    idx <- NA
-    for(xs in x_split){
-      idx <- grep( paste("(^|", sep_y,")", 
-                         xs, 
-                         "($|",sep_y,")", 
-                         sep = ""), 
-                   y)
-      if(length(idx)>0){
-        break
-      }
-    }
-    if(length(idx)==0){idx <- NA}
-    return(idx[1])
   }
+  
+  x_split <- ifelse(is.null(sep_x), x, strsplit(x, split = sep_x)[[1]])
+  idx <- NA
+  for(xs in x_split){
+    idx <- grep( paste("(^|", sep_y,")", 
+                       xs, 
+                       "($|",sep_y,")", 
+                       sep = ""), 
+                 y)
+    if(length(idx)>0){
+      break
+    }
+  }
+  
+  if(length(idx)==0){idx <- NA}
+  
+  return(idx[1])
+  
 }

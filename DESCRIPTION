@@ -9,7 +9,8 @@ Imports:
   pannot
 Remotes: VoisinneG/pannot
 LazyData: TRUE
-License: file LICENSE
-RoxygenNote: 7.1.1
+License: CeCILL (==2)
+Encoding: UTF-8
+RoxygenNote: 7.1.2
 Depends:
   R (>= 2.10)
