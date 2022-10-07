@@ -19,6 +19,8 @@ proteinRuler(
   idx_histones = NULL,
   col_mass = NULL,
   show_progress = TRUE,
+  replace_zero_by_na = TRUE,
+  max_keys = 200,
   ...
 )
 }
@@ -59,7 +61,12 @@ retireved from UniProt using the first ID of the protein group.}
 
 \item{show_progress}{Show progress bar when querrying annotations from UniProt}
 
-\item{...}{additionnal parameters passed to fucntion \code{compute_protein_number()}}
+\item{replace_zero_by_na}{Replace zero-valued intensities by NA.}
+
+\item{max_keys}{Maximum query length used to retrieve UniProt data (passed to function
+\code{pannot::get_annotations_uniprot()})}
+
+\item{...}{additionnal parameters passed to fucntion \code{pannot::get_annotations_uniprot()}}
 }
 \value{
 a data.frame with protein abundances

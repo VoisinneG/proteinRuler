@@ -1,7 +1,7 @@
 R package: proteinRuler
 ================
 Guillaume Voisinne
-2020 - 03 - 05
+2022 - 09 - 27
 
 [![Travis-CI Build
 Status](https://travis-ci.org/VoisinneG/proteinruler.svg?branch=master)](https://travis-ci.org/VoisinneG/queryup)
@@ -20,9 +20,6 @@ Install the package from github using devtools:
 devtools::install_github("VoisinneG/proteinRuler")
 library(proteinRuler)
 ```
-
-    ## Warning: replacing previous import 'IRanges::desc' by 'plyr::desc' when loading
-    ## 'PSICQUIC'
 
 ## Examples
 

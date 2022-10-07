@@ -10,6 +10,7 @@ date: "`r format(Sys.time(), '%Y - %m - %d')`"
 ```{r include=FALSE}
 library(knitr)
 knitr::opts_chunk$set(echo = TRUE, message=FALSE, warnings=FALSE)
+devtools::load_all()
 ```
 
 [![Travis-CI Build Status](https://travis-ci.org/VoisinneG/proteinruler.svg?branch=master)](https://travis-ci.org/VoisinneG/queryup) 
@@ -24,7 +25,7 @@ Install
 ---
 Install the package from github using devtools:
 
-```{r}
+```{r eval=FALSE}
 devtools::install_github("VoisinneG/proteinRuler")
 library(proteinRuler)
 ```

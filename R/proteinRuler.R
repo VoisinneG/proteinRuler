@@ -22,7 +22,10 @@
 #' histones are identified using UniProt annotations corresponding to the 
 #' first ID of the protein group.
 #' @param show_progress Show progress bar when querrying annotations from UniProt
-#' @param ... additionnal parameters passed to fucntion \code{compute_protein_number()}
+#' @param replace_zero_by_na Replace zero-valued intensities by NA.
+#' @param max_keys Maximum query length used to retrieve UniProt data (passed to function
+#' \code{pannot::get_annotations_uniprot()})
+#' @param ... additionnal parameters passed to fucntion \code{pannot::get_annotations_uniprot()}
 #' @return a data.frame with protein abundances
 #' @examples
 #' data("proteinGroups_CD4_Tcells")
@@ -47,6 +50,8 @@ proteinRuler <- function(df,
                          idx_histones = NULL,
                          col_mass = NULL,
                          show_progress = TRUE,
+                         replace_zero_by_na = TRUE,
+                         max_keys = 200,
                          ...){
   
   ### Sanity checks ################################################################################
@@ -132,7 +137,9 @@ proteinRuler <- function(df,
                                                  columns = c("gene_names", 
                                                              "protein_families", 
                                                              "mass"), 
-                                                 show_progress = show_progress)
+                                                max_keys = max_keys,
+                                                 show_progress = show_progress,
+                                                ...)
     
     if(!is.null(df_annot)){
       #convert Mass from factors to numeric values
@@ -183,7 +190,8 @@ proteinRuler <- function(df,
                                 col_ID = col_protein_id,
                                 mass_per_cell_in_g = mass_per_cell_in_g,
                                 DNA_mass_per_cell = DNA_mass_per_cell,
-                                ...)
+                                replace_zero_by_na = TRUE
+                                )
   
   if(!is.null(df_annot)){
     names(df_annot)[which(names(df_annot) == "Mass")] <- "Mass.kDa"
